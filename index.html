@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Farmer Assistant | स्मार्ट शेतकरी सहाय्यक</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/modules.css">
+</head>
+<body>
+
+  <!-- 1. Top Demonstration Banner -->
+  <div class="demo-banner">
+    <div class="demo-banner-content">
+      <span class="demo-pill" data-i18n="demoBadge">DEMO MODE</span>
+      <span data-i18n="demoNotice">Sample Agricultural Demonstration Data. No real money or live API connection is required.</span>
+    </div>
+  </div>
+
+  <!-- 2. Main Header & Language Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section" onclick="showModule('view-dashboard')">
+        <div class="brand-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 data-i18n="appTitle">स्मार्ट शेतकरी सहाय्यक</h1>
+          <p data-i18n="appTagline">भारतीय शेतकऱ्यांसाठी सोपे आणि आधुनिक डिजिटल साधन</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Quick Language Switcher -->
+        <div class="lang-selector-group" role="group" aria-label="Language selector">
+          <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+          <button class="lang-btn active" data-lang="mr" onclick="setLanguage('mr')">मराठी</button>
+          <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+
+        <!-- Farmer Authentication Pill / Login Button (Phase 6) -->
+        <div id="nav-auth-container" class="nav-auth-container"></div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Layout: Sidebar + Main Content -->
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar-nav">
+      <nav class="nav-card">
+        <div class="nav-title" data-i18n="quickActions">शेती सुविधा मेनू</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <button class="nav-link active" data-target="view-dashboard">
+              <span class="icon">🏠</span>
+              <span data-i18n="navDashboard">शेतकरी डॅशबोर्ड</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-tracker">
+              <span class="icon">💰</span>
+              <span data-i18n="navTracker">खर्च व उत्पन्न नोंदवही</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-weather">
+              <span class="icon">⛅</span>
+              <span data-i18n="navWeather">हवामान व पाऊस अंदाज</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-crop-ai">
+              <span class="icon">🤖</span>
+              <span data-i18n="navCropAI">AI पीक शिफारस व पेरणी</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-irrigation">
+              <span class="icon">💧</span>
+              <span data-i18n="navIrrigation">स्मार्ट सिंचन नियोजन</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-crop-info">
+              <span class="icon">📖</span>
+              <span data-i18n="navCropInfo">पीक माहिती व काळजी</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-market">
+              <span class="icon">📈</span>
+              <span data-i18n="navMarket">बाजारभाव व विक्री सल्ला</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-reports">
+              <span class="icon">📊</span>
+              <span data-i18n="navReports">नफा कॅल्क्युलेटर व अहवाल</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="view-settings">
+              <span class="icon">🌐</span>
+              <span data-i18n="navSettings">भाषा सेटिंग्स</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- ================================================================
+           MODULE 1: FARMER DASHBOARD (ENHANCED DESIGN)
+           ================================================================ -->
+      <section id="view-dashboard" class="module-view active">
+        <!-- Dashboard Header with Status & Fast Actions -->
+        <div class="view-header">
+          <div class="view-title-group">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
+              <h2 data-i18n="greeting">रामराम शेतकरी बंधू!</h2>
+              <span class="badge badge-success">● <span data-i18n="systemReady">प्रणाली कार्यरत</span></span>
+              <span class="badge badge-demo" data-i18n="demoBadge">नमुना माहिती</span>
+            </div>
+            <p data-i18n="greetingSub">तुमच्या शेतीचा आजचा संपूर्ण सारांश येथे पहा.</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="showModule('view-tracker')">
+              ➕ <span data-i18n="addTransaction">नवीन नोंद करा</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 6 KPI Summary Cards Grid -->
+        <div class="stats-grid">
+          <!-- Card 1: Total Crop Income -->
+          <div class="stat-card" onclick="showModule('view-tracker')" title="Click to view full income tracker">
+            <div class="stat-icon green">🌾</div>
+            <div class="stat-info">
+              <h4 data-i18n="kpiIncome">एकूण पीक उत्पन्न</h4>
+              <div class="stat-value" id="dash-kpi-income">₹ 41,900</div>
+              <div class="stat-subtext" style="color: var(--primary-green);">▲ 2 Sales Recorded</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Total Farm Expenses -->
+          <div class="stat-card" onclick="showModule('view-tracker')" title="Click to view expenses">
+            <div class="stat-icon red">💸</div>
+            <div class="stat-info">
+              <h4 data-i18n="kpiExpense">एकूण शेती खर्च</h4>
+              <div class="stat-value" id="dash-kpi-expense">₹ 10,400</div>
+              <div class="stat-subtext" style="color: var(--danger-red);">Seeds, Fertilizer, Diesel</div>
+            </div>
+          </div>
+
+          <!-- Card 3: Estimated Net Profit -->
+          <div class="stat-card" onclick="showModule('view-tracker')" title="Click to view net balance">
+            <div class="stat-icon dark-green">⚖️</div>
+            <div class="stat-info">
+              <h4 data-i18n="kpiProfit">अंदाजे निव्वळ नफा</h4>
+              <div class="stat-value" id="dash-kpi-profit">₹ 31,500</div>
+              <div class="stat-subtext" style="color: var(--primary-dark);">Profit in Green</div>
+            </div>
+          </div>
+
+          <!-- Card 4: Number of Active Crops -->
+          <div class="stat-card" onclick="showModule('view-crop-info')" title="Click to view crop knowledge">
+            <div class="stat-icon emerald">🌱</div>
+            <div class="stat-info">
+              <h4 data-i18n="kpiCropsCount">नोंद केलेली पिके</h4>
+              <div class="stat-value" id="dash-kpi-crops">6</div>
+              <div class="stat-subtext" style="color: #117A65;" data-i18n="activeCropsSub">६ पिके नोंदवहीत</div>
+            </div>
+          </div>
+
+          <!-- Card 5: Upcoming Farm Tasks -->
+          <div class="stat-card" onclick="showModule('view-irrigation')" title="Click to view task scheduler">
+            <div class="stat-icon amber">📋</div>
+            <div class="stat-info">
+              <h4 data-i18n="kpiUpcomingTasks">आगामी शेती कामे</h4>
+              <div class="stat-value" id="dash-kpi-tasks">3</div>
+              <div class="stat-subtext" style="color: #B78103;" data-i18n="tasksCountText">३ कामे नियोजित</div>
+            </div>
+          </div>
+
+          <!-- Card 6: Current Weather Status -->
+          <div class="stat-card" onclick="showModule('view-weather')" title="Click to view full forecast">
+            <div class="stat-icon blue">⛅</div>
+            <div class="stat-info">
+              <h4 data-i18n="todayWeather">आजचे हवामान</h4>
+              <div class="stat-value" id="dash-weather-temp">29°C</div>
+              <div class="stat-subtext" id="dash-weather-loc" style="color: var(--info-blue);">Pune, Maharashtra</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Two Columns -->
+        <div class="dashboard-grid">
+          <!-- Left Column -->
+          <div>
+            <!-- Smart Advisory Banner -->
+            <div class="advisory-box">
+              <div class="advisory-header">
+                <span style="font-size: 1.6rem;">💡</span>
+                <h3 style="margin: 0; color: var(--primary-dark); font-size: 1.25rem;" data-i18n="todayAdvisory">आजचा कृषी सल्ला</h3>
+              </div>
+              <p style="margin: 0; font-size: 1.02rem; color: var(--primary-dark); font-weight: 500; line-height: 1.5;" data-i18n="advisoryText">
+                आज हवामान कोरडे व निरभ्र राहील. कीटकनाशक फवारणीसाठी आणि ठिबक तपासणीसाठी उत्तम वेळ आहे.
+              </p>
+              <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="showModule('view-weather')">
+                  💧 <span data-i18n="sprayingCondition">फवारणी सल्ला तपासा</span>
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="showModule('view-irrigation')">
+                  🕒 <span data-i18n="navIrrigation">सिंचन नियोजन पहा</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Action Tiles (6 Accessible Farmer Shortcuts) -->
+            <div class="farm-card" style="margin-bottom: 20px;">
+              <div class="card-header">
+                <h3 class="card-title" data-i18n="quickActions">जलद शेती सुविधा</h3>
+              </div>
+              <div class="quick-actions-grid">
+                <div class="action-tile" onclick="showModule('view-tracker')">
+                  <div class="action-tile-icon">💰</div>
+                  <div class="action-tile-text">
+                    <div class="action-tile-label" data-i18n="navTracker">जमा-खर्च नोंदवही</div>
+                    <div class="action-tile-desc">बियाणे, खते व पीक विक्री</div>
+                  </div>
+                </div>
+
+                <div class="action-tile" onclick="showModule('view-crop-ai')">
+                  <div class="action-tile-icon">🌱</div>
+                  <div class="action-tile-text">
+                    <div class="action-tile-label" data-i18n="navCropAI">AI पीक शिफारस</div>
+                    <div class="action-tile-desc">माती व हंगामानुसार पिके</div>
+                  </div>
+                </div>
+
+                <div class="action-tile" onclick="showModule('view-irrigation')">
+                  <div class="action-tile-icon">💧</div>
+                  <div class="action-tile-text">
+                    <div class="action-tile-label" data-i18n="navIrrigation">स्मार्ट सिंचन</div>
+                    <div class="action-tile-desc">पाणी व वीज बचत वेळापत्रक</div>
+                  </div>
+                </div>
+
+                <div class="action-tile" onclick="showModule('view-market')">
+                  <div class="action-tile-icon">📈</div>
+                  <div class="action-tile-text">
+                    <div class="action-tile-label" data-i18n="navMarket">बाजारभाव व सल्ला</div>
+                    <div class="action-tile-desc">APMC चालू बाजार दर</div>
+                  </div>
+                </div>
+
+                <div class="action-tile" onclick="showModule('view-reports')">
+                  <div class="action-tile-icon">🧮</div>
+                  <div class="action-tile-text">
+                    <div class="action-tile-label" data-i18n="navReports">नफा कॅल्क्युलेटर</div>
+                    <div class="action-tile-desc">एकरनिहाय निव्वळ नफा</div>
+                  </div>
+                </div>
+
+                <div class="action-tile" onclick="showModule('view-crop-info')">
+                  <div class="action-tile-icon">📖</div>
+                  <div class="action-tile-text">
+                    <div class="action-tile-label" data-i18n="navCropInfo">पीक ज्ञान केंद्र</div>
+                    <div class="action-tile-desc">रोग नियंत्रण व कृषी टिप्स</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Farm Activity Preview on Dashboard -->
+            <div class="farm-card">
+              <div class="card-header">
+                <h3 class="card-title" data-i18n="recentActivity">अलीकडील शेती व्यवहार</h3>
+                <button class="btn btn-secondary btn-sm" onclick="showModule('view-tracker')">
+                  <span data-i18n="openFullTracker">नोंदवही उघडा</span> →
+                </button>
+              </div>
+              <div class="dash-tx-snippet-list" id="dash-recent-tx-list">
+                <!-- Dynamically populated from tracker.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <!-- Weather Quick Card -->
+            <div class="farm-card" style="margin-bottom: 20px;">
+              <div class="card-header">
+                <h3 class="card-title" data-i18n="todayWeather">स्थानिक हवामान</h3>
+                <button class="btn btn-secondary btn-sm" onclick="showModule('view-weather')">
+                  <span data-i18n="viewAll">सविस्तर</span> →
+                </button>
+              </div>
+              <div style="text-align: center; padding: 14px 0;">
+                <div style="font-size: 3.2rem;">☀️</div>
+                <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-dark);" id="dash-weather-temp-preview">29°C</div>
+                <p style="margin-top: 4px; font-weight: 600; color: var(--primary-green);">निरभ्र सूर्यप्रकाश (Clear)</p>
+                <div style="display: flex; justify-content: space-around; margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 12px; font-size: 0.9rem;">
+                  <div>💧 42% आर्द्रता</div>
+                  <div>🌬️ 11 km/h वारा</div>
+                </div>
+                <div style="margin-top: 14px;">
+                  <span class="badge badge-success" style="font-size: 0.85rem;">✅ फवारणीसाठी उत्तम वेळ</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Farm Tasks & Calendar Box on Dashboard -->
+            <div class="farm-card">
+              <div class="card-header" style="flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h3 class="card-title">
+                    <span>📅</span> <span data-i18n="kpiUpcomingTasks">आगामी शेती कामे</span>
+                  </h3>
+                  <span class="badge badge-warning" id="dash-tasks-badge">३ कामे</span>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openTaskModal(null)">
+                  + <span data-i18n="addTaskBtn">नवीन काम जोडा</span>
+                </button>
+              </div>
+
+              <!-- Due Today / Overdue In-App Alert Banner -->
+              <div id="dash-task-alert-banner" class="dash-task-alert-banner" style="display: none;"></div>
+
+              <!-- 7-Day Interactive Calendar Strip -->
+              <div id="task-calendar-strip" class="task-calendar-strip"></div>
+
+              <!-- Task Filter Pills -->
+              <div class="task-filter-pills">
+                <button class="btn btn-primary btn-sm task-filter-btn" data-filter="all" onclick="setTaskFilter('all')" data-i18n="filterTasksAll">सर्व कामे</button>
+                <button class="btn btn-secondary btn-sm task-filter-btn" data-filter="pending" onclick="setTaskFilter('pending')" data-i18n="filterTasksPending">बाकी कामे</button>
+                <button class="btn btn-secondary btn-sm task-filter-btn" data-filter="high" onclick="setTaskFilter('high')" data-i18n="filterTasksHigh">तातडीचे 🔴</button>
+                <button class="btn btn-secondary btn-sm task-filter-btn" data-filter="completed" onclick="setTaskFilter('completed')" data-i18n="filterTasksCompleted">पूर्ण झालेली</button>
+              </div>
+
+              <!-- Dynamic Tasks Container -->
+              <div id="dash-tasks-container">
+                <!-- Dynamically populated from js/tasks.js -->
+              </div>
+            </div>
+
+            <!-- APMC Mandi Rates & Selling Advisor Preview on Dashboard (Phase 5) -->
+            <div class="farm-card" style="margin-top: 20px;">
+              <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h3 class="card-title">
+                    <span>📈</span> <span data-i18n="navMarket">बाजारभाव व सल्ला</span>
+                  </h3>
+                  <span class="badge badge-success" data-i18n="mktDataQualityDated">अधिकृत दिनांकित दर (ॲगमार्कनेट)</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="showModule('view-market')">
+                  <span data-i18n="viewAll">सविस्तर</span> →
+                </button>
+              </div>
+
+              <div id="dash-market-preview">
+                <!-- Dynamically populated from js/market.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 2: EXPENSE AND INCOME TRACKER
+           ================================================================ -->
+      <section id="view-tracker" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="trackerTitle">शेती खर्च व उत्पन्न नोंदवही</h2>
+            <p data-i18n="trackerSub">बियाणे, खते, डिझेल, मजुरी आणि पीक विक्रीचा प्रत्येक रुपया अचूक नोंदवा.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="resetTrackerToSampleData()">
+            🔄 <span data-i18n="resetSampleBtn">नमुना माहिती पूर्ववत करा</span>
+          </button>
+        </div>
+
+        <!-- Summary Totals -->
+        <div class="tracker-summary-cards">
+          <div class="tracker-card income">
+            <h4 data-i18n="kpiIncome">एकूण जमा (उत्पन्न)</h4>
+            <div class="amount" id="tracker-total-income">₹ 0</div>
+          </div>
+          <div class="tracker-card expense">
+            <h4 data-i18n="kpiExpense">एकूण खर्च</h4>
+            <div class="amount" id="tracker-total-expense">₹ 0</div>
+          </div>
+          <div class="tracker-card profit">
+            <h4 data-i18n="kpiProfit">निव्वळ शिल्लक / नफा</h4>
+            <div class="amount" id="tracker-net-profit">₹ 0</div>
+          </div>
+        </div>
+
+        <!-- Add Transaction Form Card -->
+        <div class="farm-card" style="margin-bottom: 22px;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span>✍️</span> <span data-i18n="addTransaction">नवीन नोंद करा</span>
+            </h3>
+          </div>
+          <form id="add-transaction-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="tx-type" data-i18n="transactionType">प्रकार</label>
+                <select class="form-select" id="tx-type" required>
+                  <option value="expense" data-i18n="typeExpense">खर्च (Expense)</option>
+                  <option value="income" data-i18n="typeIncome">जमा (Income)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tx-category" data-i18n="categoryLabel">तपशील वर्ग</label>
+                <select class="form-select" id="tx-category" required>
+                  <option value="catSeeds" data-i18n="catSeeds">बियाणे व रोपे खरेदी</option>
+                  <option value="catFertilizer" data-i18n="catFertilizer">रासायनिक व सेंद्रिय खते</option>
+                  <option value="catPesticide" data-i18n="catPesticide">कीटकनाशके व टॉनिक</option>
+                  <option value="catLabor" data-i18n="catLabor">मजुरी (खुरपणी, तोडणी)</option>
+                  <option value="catFuel" data-i18n="catFuel">ट्रॅक्टर नांगरट व डिझेल</option>
+                  <option value="catIrrigation" data-i18n="catIrrigation">विज बिल व सिंचन दुरुस्ती</option>
+                  <option value="catHarvest" data-i18n="catHarvest">मळणी व काढणी खर्च</option>
+                  <option value="catCropSale" data-i18n="catCropSale">धान्य / पीक थेट विक्री</option>
+                  <option value="catSubsidy" data-i18n="catSubsidy">सरकारी कृषी योजना अनुदान</option>
+                  <option value="catOther" data-i18n="catOther">इतर किरकोळ खर्च</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tx-amount" data-i18n="amountLabel">रक्कम (₹)</label>
+                <input type="number" class="form-control" id="tx-amount" placeholder="उदा. 2500" required min="1" step="any">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tx-date" data-i18n="dateLabel">तारीख</label>
+                <input type="date" class="form-control" id="tx-date" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="tx-desc" data-i18n="descriptionLabel">तपशील / शेरा (Notes)</label>
+              <input type="text" class="form-control" id="tx-desc" placeholder="उदा. 2 एकरासाठी युरिया व पोटॅश खरेदी">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              💾 <span data-i18n="saveRecordBtn">नोंद जतन करा</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Filter & Transaction Table -->
+        <div class="farm-card">
+          <div class="filter-bar">
+            <h3 class="card-title" data-i18n="recentTransactions">जमा-खर्च नोंदी</h3>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary btn-sm filter-btn" data-filter="all" onclick="setTrackerFilter('all')" data-i18n="filterAll">सर्व नोंदी</button>
+              <button class="btn btn-secondary btn-sm filter-btn" data-filter="income" onclick="setTrackerFilter('income')" data-i18n="filterIncome">फक्त जमा</button>
+              <button class="btn btn-secondary btn-sm filter-btn" data-filter="expense" onclick="setTrackerFilter('expense')" data-i18n="filterExpense">फक्त खर्च</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="farm-table">
+              <thead>
+                <tr>
+                  <th data-i18n="thType">प्रकार</th>
+                  <th data-i18n="thCategory">तपशील वर्ग</th>
+                  <th data-i18n="thDesc">नोंद / शेरा</th>
+                  <th data-i18n="thDate">तारीख</th>
+                  <th data-i18n="thAmount">रक्कम (₹)</th>
+                  <th data-i18n="thAction">कृती</th>
+                </tr>
+              </thead>
+              <tbody id="tracker-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 3: WEATHER & RAINFALL ANALYSIS (OPEN-METEO API)
+           ================================================================ -->
+      <section id="view-weather" class="module-view">
+        <!-- View Header with State & District Selectors -->
+        <div class="view-header">
+          <div class="view-title-group">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
+              <h2 data-i18n="weatherTitle">हवामान अंदाज व ७ दिवसांचा पाऊस अंदाज</h2>
+              <span id="weather-status-badge" class="badge badge-live">🟢 <span data-i18n="liveDataBadge">थेट उपग्रह हवामान (Live)</span></span>
+            </div>
+            <p data-i18n="weatherSub">पेरणी, फवारणी व सिंचन वेळेवर करण्यासाठी थेट स्थानिक हवामान व पाऊस अंदाज.</p>
+          </div>
+
+          <!-- State and District Selection Form -->
+          <div class="weather-selector-row">
+            <div>
+              <label class="form-label" for="weather-state-select" style="margin-bottom: 4px;" data-i18n="selectState">राज्य निवडा</label>
+              <select class="form-select" id="weather-state-select" style="min-width: 170px;">
+                <!-- Populated dynamically from js/weather.js -->
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="weather-district-select" style="margin-bottom: 4px;" data-i18n="selectDistrict">जिल्हा निवडा</label>
+              <select class="form-select" id="weather-district-select" style="min-width: 190px;">
+                <!-- Populated dynamically from js/weather.js -->
+              </select>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="fetchLiveWeather()" title="Refresh live data" style="margin-bottom: 2px;">
+              🔄 <span data-i18n="retryBtn">पुन्हा लोड करा</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Connection / Offline Error Banner (Hidden by default) -->
+        <div id="weather-error-banner" style="display: none;"></div>
+
+        <!-- Current Observation Hero Banner -->
+        <div class="weather-hero">
+          <div>
+            <h3 id="weather-location-name" style="font-size: 1.7rem; margin-bottom: 6px; font-weight: 800;">Pune, Maharashtra</h3>
+            <p id="weather-condition-main" style="font-size: 1.15rem; opacity: 0.95; font-weight: 600;">☀️ Clear Sunny Sky</p>
+            <div class="weather-temp" id="weather-temp-main">--°C</div>
+            <div style="font-size: 0.88rem; opacity: 0.9; margin-top: 6px;">
+              <span data-i18n="feelsLike">जाणवणारे तापमान</span>: <strong id="weather-feels-like">--°C</strong>
+            </div>
+          </div>
+
+          <div class="weather-params">
+            <div class="weather-param-item">
+              <span data-i18n="humidityLabel">हवेतील आर्द्रता</span>
+              <strong id="weather-humidity">--%</strong>
+            </div>
+            <div class="weather-param-item">
+              <span data-i18n="rainProb">पावसाची शक्यता</span>
+              <strong id="weather-rain">--%</strong>
+            </div>
+            <div class="weather-param-item">
+              <span data-i18n="windSpeed">वाऱ्याचा वेग</span>
+              <strong id="weather-wind">-- km/h</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agricultural Advisories Container (Heavy Rain, Dry Spell, Spraying) -->
+        <div id="weather-advisories-wrapper" class="weather-advisories-container">
+          <!-- Dynamically populated from weather.js based on live threshold analysis -->
+        </div>
+
+        <!-- 7-Day Agricultural Forecast -->
+        <div class="farm-card" style="margin-bottom: 20px;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span>📅</span> <span data-i18n="sevenDayForecast">पुढील ७ दिवसांचा कृषी हवामान अंदाज</span>
+            </h3>
+            <span class="badge badge-info" data-i18n="rainfallForecast">अपेक्षित पाऊस (mm)</span>
+          </div>
+          <div class="forecast-grid" id="weather-forecast-grid">
+            <!-- Dynamically populated with 7 days of forecast -->
+          </div>
+        </div>
+
+        <!-- Meteorological Attribution, Disclaimers & Official IMD Reference Link -->
+        <div class="weather-meta-card">
+          <div>
+            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 3px;" data-i18n="sourceAttribution">
+              माहिती स्रोत: Open-Meteo Weather API (जागतिक संख्यात्मक मॉडेल व IMD संदर्भ)
+            </div>
+            <div id="weather-last-updated" style="font-size: 0.82rem; color: var(--text-muted);">
+              शेवटचे अद्यतन: --
+            </div>
+            <div style="font-size: 0.78rem; color: #78909C; margin-top: 4px; font-style: italic;" data-i18n="forecastDisclaimer">
+              हवामान अंदाज हा संगणकीय मॉडेलवर आधारित अंदाज आहे, खात्रीशीर निरीक्षण नव्हे.
+            </div>
+          </div>
+          <div>
+            <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="text-decoration: none;">
+              🏛️ <span data-i18n="imdPortalLink">अधिकृत हवामान विभाग (IMD Portal)</span> ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 4: AI CROP RECOMMENDATION & SOWING PLANNER
+           ================================================================ -->
+      <section id="view-crop-ai" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="cropAiTitle">AI पीक शिफारस व पेरणी नियोजन</h2>
+            <p data-i18n="cropAiSub">तुमची माती, हंगाम आणि उपलब्ध पाण्यानुसार जास्त नफा देणारे पीक निवडा.</p>
+          </div>
+        </div>
+
+        <div class="farm-card" style="margin-bottom: 22px;">
+          <form id="ai-crop-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="ai-soil-type" data-i18n="soilType">शेतातील मातीचा प्रकार</label>
+                <select class="form-select" id="ai-soil-type">
+                  <option value="soilBlack" data-i18n="soilBlack">काळी कसदार माती (Black Soil)</option>
+                  <option value="soilRed" data-i18n="soilRed">तांबडी किंवा पोयटा माती (Red Soil)</option>
+                  <option value="soilSandy" data-i18n="soilSandy">हलकी / मुरमाड माती (Sandy Soil)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ai-season" data-i18n="seasonLabel">आगामी पेरणीचा हंगाम</label>
+                <select class="form-select" id="ai-season">
+                  <option value="seasonKharif" data-i18n="seasonKharif">खरीप हंगाम (पावसाळा: जून - ऑक्टोबर)</option>
+                  <option value="seasonRabi" data-i18n="seasonRabi">रब्बी हंगाम (हिवाळा: नोव्हेंबर - मार्च)</option>
+                  <option value="seasonSummer" data-i18n="seasonSummer">उन्हाळी हंगाम (मार्च - जून)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ai-water-source" data-i18n="waterSource">पाण्याची उपलब्धता</label>
+                <select class="form-select" id="ai-water-source">
+                  <option value="waterBorewell" data-i18n="waterBorewell">मध्यम पाणी (बोअरवेल / ठिबक)</option>
+                  <option value="waterCanal" data-i18n="waterCanal">भरपूर पाणी (कॅनॉल / विहीर)</option>
+                  <option value="waterRainfed" data-i18n="waterRainfed">जिरायती (केवळ पावसावर)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ai-land-size" data-i18n="landSize">जमीन क्षेत्र (एकर)</label>
+                <input type="number" class="form-control" id="ai-land-size" value="2" min="0.5" step="0.5">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              🔍 <span data-i18n="getRecommendationBtn">योग्य पिकांची शिफारस मिळवा</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Output Recommendations -->
+        <div class="farm-card">
+          <div class="card-header">
+            <h3 class="card-title" data-i18n="recResultsTitle">तुमच्या शेतासाठी योग्य पिके</h3>
+          </div>
+          <div id="ai-recommendations-output">
+            <!-- Dynamically populated cards -->
+          </div>
+        </div>
+
+        <!-- Side-by-Side Crop Comparison Section -->
+        <div class="farm-card crop-compare-section" style="margin-top: 24px;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span>⚖️</span> <span data-i18n="cropComparisonTitle">पिकांची समोरासमोर तुलना</span>
+            </h3>
+          </div>
+          <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 16px;" data-i18n="cropComparisonSub">
+            दोन पिकांमधील पाणी, कालावधी, मजुरी आणि जोखमीची तुलना करून शेतीसाठी योग्य निर्णय घ्या.
+          </p>
+          <div class="form-row" style="align-items: flex-end;">
+            <div class="form-group" style="flex: 1; min-width: 220px; margin-bottom: 12px;">
+              <label class="form-label" for="compare-crop-a" data-i18n="selectCropA">पहिले पीक निवडा</label>
+              <select class="form-select" id="compare-crop-a"></select>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 220px; margin-bottom: 12px;">
+              <label class="form-label" for="compare-crop-b" data-i18n="selectCropB">दुसरे पीक निवडा</label>
+              <select class="form-select" id="compare-crop-b"></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+              <button class="btn btn-primary" id="compare-crops-btn" type="button">
+                📊 <span data-i18n="compareCropsBtn">पिकांची तुलना करा</span>
+              </button>
+            </div>
+          </div>
+          <div id="crop-comparison-output" style="margin-top: 16px;"></div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 5: SMART IRRIGATION PLANNER & IRRIGATION LOG
+           ================================================================ -->
+      <section id="view-irrigation" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="irrigationTitle">स्मार्ट पाणी सिंचन नियोजन</h2>
+            <p data-i18n="irrigationSub">पिकांच्या गरजेनुसार पाणी देऊन वीज आणि पाण्याचे रक्षण करा.</p>
+          </div>
+        </div>
+
+        <!-- 48-Hour Rainfall & Irrigation Weather Advisory Banner -->
+        <div id="irrigation-weather-alert-container">
+          <!-- Dynamically populated from weather forecast -->
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Input Form: Irrigation Scheduler -->
+          <div class="farm-card">
+            <div class="card-header">
+              <h3 class="card-title">💧 <span data-i18n="calculateWaterBtn">पाण्याची गरज तपासा</span></h3>
+            </div>
+            <form id="irrigation-form">
+              <div class="form-group">
+                <label class="form-label" for="irr-crop-select" data-i18n="selectCropIrrigation">पीक निवडा</label>
+                <select class="form-select" id="irr-crop-select">
+                  <option value="cropSoybean">सोयाबीन (Soybean)</option>
+                  <option value="cropCotton">कापूस (Cotton)</option>
+                  <option value="cropWheat">गहू (Wheat)</option>
+                  <option value="cropOnion">कांदा (Onion)</option>
+                  <option value="cropSugarcane">ऊस (Sugarcane)</option>
+                  <option value="cropMaize">मका (Maize)</option>
+                  <option value="cropTur">तूर / अरहर (Tur / Arhar)</option>
+                  <option value="cropGroundnut">भुईमूग (Groundnut)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="irr-stage-select" data-i18n="cropStageLabel">पिकाची सध्याची अवस्था</label>
+                <select class="form-select" id="irr-stage-select">
+                  <option value="stageFlowering" data-i18n="stageFlowering">फुलधारणा व फळधारणा (५५-८५ दिवस)</option>
+                  <option value="stageVegetative" data-i18n="stageVegetative">शाकीय वाढीची अवस्था (२५-५५ दिवस)</option>
+                  <option value="stageSeedling" data-i18n="stageSeedling">रोप व उगवण अवस्था (०-२५ दिवस)</option>
+                  <option value="stageMaturity" data-i18n="stageMaturity">दाणे भरणे व पक्वता (८५+ दिवस)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="irr-method-select" data-i18n="irrigationMethod">सिंचन पद्धत</label>
+                <select class="form-select" id="irr-method-select">
+                  <option value="methodDrip" data-i18n="methodDrip">ठिबक सिंचन (Drip)</option>
+                  <option value="methodSprinkler" data-i18n="methodSprinkler">तुषार सिंचन (Sprinkler)</option>
+                  <option value="methodFlood" data-i18n="methodFlood">पाट पाणी / मोकळे पाणी</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                ⚡ <span data-i18n="calculateWaterBtn">वेळापत्रक काढा</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Schedule Output Card -->
+          <div class="farm-card">
+            <div class="card-header">
+              <h3 class="card-title">🕒 <span data-i18n="recommendedWater">पाणी देण्याची वेळ</span></h3>
+            </div>
+            <div id="irrigation-result-card">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             COMPLETED IRRIGATION LOG & HISTORY (BACKEND PERSISTENT)
+             ============================================================== -->
+        <div class="farm-card" style="margin-top: 24px;">
+          <div class="card-header" style="flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 class="card-title">
+                <span>📋</span> <span data-i18n="irrigationLogTitle">सिंचन इतिहास व पूर्ण झालेल्या नोंदी</span>
+              </h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted); margin: 4px 0 0 0;" data-i18n="irrigationLogSub">
+                प्रत्येक वेळी पाणी दिल्यानंतर तारीख, तास, पाण्याचे प्रमाण आणि नोंदी व्यवस्थित ठेवा.
+              </p>
+            </div>
+            <div id="irr-sync-action-container" style="display: none;">
+              <button class="btn btn-secondary btn-sm" id="btn-sync-offline-irr" onclick="syncPendingIrrigationLogs()">
+                🔄 <span data-i18n="syncPendingBtn">ऑफलाइन नोंदी सिंक करा</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Add Irrigation Record Form -->
+          <form id="add-irrigation-log-form" style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+            <h4 style="color: var(--primary-dark); font-size: 1.05rem; margin: 0 0 14px 0;" data-i18n="addIrrigationLogTitle">
+              ✍️ पूर्ण झालेले सिंचन नोंदवा
+            </h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="irr-log-crop" data-i18n="cropNameLabel">पीक</label>
+                <select class="form-select" id="irr-log-crop" required>
+                  <option value="Soybean">सोयाबीन (Soybean)</option>
+                  <option value="Bt Cotton">कापूस (Bt Cotton)</option>
+                  <option value="Wheat">गहू (Wheat)</option>
+                  <option value="Onion">कांदा (Onion)</option>
+                  <option value="Sugarcane">ऊस (Sugarcane)</option>
+                  <option value="Maize">मका (Maize)</option>
+                  <option value="Tur / Arhar">तूर / अरहर (Tur)</option>
+                  <option value="Groundnut">भुईमूग (Groundnut)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="irr-log-date" data-i18n="irrigationDateLabel">सिंचनाची तारीख</label>
+                <input type="date" class="form-control" id="irr-log-date" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="irr-log-duration" data-i18n="durationHoursLabel">पाणी चालवलेले तास</label>
+                <input type="number" class="form-control" id="irr-log-duration" placeholder="उदा. 3.5" min="0.1" max="24" step="0.5" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="irr-log-method" data-i18n="irrigationMethodLabel">सिंचन पद्धत</label>
+                <select class="form-select" id="irr-log-method">
+                  <option value="methodDrip" data-i18n="methodDrip">ठिबक सिंचन (Drip)</option>
+                  <option value="methodSprinkler" data-i18n="methodSprinkler">तुषार सिंचन (Sprinkler)</option>
+                  <option value="methodFlood" data-i18n="methodFlood">पाट पाणी / मोकळे पाणी</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="irr-log-quantity" data-i18n="waterQuantityLabel">पाण्याचे प्रमाण (लिटर - ऐच्छिक)</label>
+                <input type="number" class="form-control" id="irr-log-quantity" placeholder="उदा. 12000" min="0" step="100">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="irr-log-notes" data-i18n="irrigationNotesLabel">शेतातील शेरा / मोटर माहिती</label>
+                <input type="text" class="form-control" id="irr-log-notes" placeholder="उदा. विहिरीचे पाणी, ३ एचपी मोटर">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="irr-log-submit-btn">
+              💾 <span data-i18n="saveIrrigationBtn">सिंचन नोंद जतन करा</span>
+            </button>
+          </form>
+
+          <!-- Irrigation Logs Table Container -->
+          <div id="irrigation-logs-table-container">
+            <!-- Dynamically populated from backend / offline storage -->
+          </div>
+        </div>
+
+        <!-- Inline/Modal Editor for Updating Records -->
+        <div id="irr-edit-modal-backdrop" class="irr-edit-modal-backdrop">
+          <div class="irr-edit-modal">
+            <h3 style="margin-top: 0; color: var(--primary-dark); font-size: 1.2rem;" data-i18n="editRecordTitle">
+              ✏️ सिंचन नोंद संपादित करा
+            </h3>
+            <form id="irr-edit-form">
+              <input type="hidden" id="edit-irr-id">
+              <div class="form-group">
+                <label class="form-label" for="edit-irr-crop" data-i18n="cropNameLabel">पीक</label>
+                <input type="text" class="form-control" id="edit-irr-crop" readonly style="background: var(--bg-hover);">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-irr-date" data-i18n="irrigationDateLabel">सिंचनाची तारीख</label>
+                <input type="date" class="form-control" id="edit-irr-date" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-irr-duration" data-i18n="durationHoursLabel">पाणी चालवलेले तास</label>
+                <input type="number" class="form-control" id="edit-irr-duration" min="0.1" max="24" step="0.5" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-irr-quantity" data-i18n="waterQuantityLabel">पाण्याचे प्रमाण (लिटर)</label>
+                <input type="number" class="form-control" id="edit-irr-quantity" min="0" step="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-irr-notes" data-i18n="irrigationNotesLabel">शेरा</label>
+                <input type="text" class="form-control" id="edit-irr-notes">
+              </div>
+              <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px;">
+                <button type="button" class="btn btn-secondary" onclick="closeIrrigationEditModal()" data-i18n="cancelEditBtn">रद्द करा</button>
+                <button type="submit" class="btn btn-primary" data-i18n="updateRecordBtn">बदल जतन करा</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 6: CROP INFORMATION ASSISTANT
+           ================================================================ -->
+      <section id="view-crop-info" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="cropInfoTitle">पीक माहिती व कृषी ज्ञान केंद्र</h2>
+            <p data-i18n="cropInfoSub">महाराष्ट्रातील मुख्य पिकांची लागवड पद्धत, रोग नियंत्रण आणि खत नियोजन.</p>
+          </div>
+        </div>
+
+        <!-- Search & Category Filters -->
+        <div class="farm-card" style="margin-bottom: 20px;">
+          <div class="form-row" style="align-items: center;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+              <input type="text" id="crop-search-input" class="form-control" placeholder="उदा. सोयाबीन, कापूस, कांदा, गहू..." data-i18n-placeholder="searchCropPlaceholder">
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-primary btn-sm crop-filter-btn" data-category="all" onclick="filterCropsByCategory('all')" data-i18n="filterCropsAll">सर्व पिके</button>
+              <button class="btn btn-secondary btn-sm crop-filter-btn" data-category="cash" onclick="filterCropsByCategory('cash')" data-i18n="filterCashCrops">नगदी पिके</button>
+              <button class="btn btn-secondary btn-sm crop-filter-btn" data-category="pulses" onclick="filterCropsByCategory('pulses')" data-i18n="filterPulses">कडधान्ये</button>
+              <button class="btn btn-secondary btn-sm crop-filter-btn" data-category="cereals" onclick="filterCropsByCategory('cereals')" data-i18n="filterCereals">अन्नधान्ये</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crops Grid -->
+        <div class="crop-cards-grid" id="crop-cards-container">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 7: CROP MARKET PRICE ANALYSIS & SELLING ADVISOR
+           ================================================================ -->
+      <section id="view-market" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="marketTitle">कृषी उत्पन्न बाजार समिती (APMC) बाजारभाव व सल्ला</h2>
+            <p data-i18n="marketSub">बाजारभाव तपासा आणि शेतमाल आत्ता विकावा की साठवून ठेवावा याचा योग्य सल्ला मिळवा.</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="btn-compare-mandis" onclick="openMandiCompareModal()">
+              ⚖️ <span data-i18n="mktCompareMandisBtn">बाजार समित्यांची तुलना</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Official Data Sourcing Card -->
+        <div class="farm-card" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex: 1;">
+              <div style="min-width: 220px; flex: 1;">
+                <label class="form-label" for="mkt-crop-filter" style="margin-bottom: 6px; font-weight: 700;" data-i18n="mktFilterCrop">शेतमालानुसार फिल्टर</label>
+                <select id="mkt-crop-filter" class="form-select" onchange="onMarketFilterChange()">
+                  <option value="all" data-i18n="mktAllCrops">सर्व शेतमाल (All Crops)</option>
+                  <option value="onion" selected>लाल कांदा (Red Onion)</option>
+                  <option value="soybean">पिवळी सोयाबीन (Yellow Soybean)</option>
+                  <option value="cotton">कापूस (Bt Cotton)</option>
+                  <option value="wheat">लोकवन गहू (Lokwan Wheat)</option>
+                  <option value="chana">हरभरा (Gram / Chana)</option>
+                  <option value="maize">मका (Yellow Maize)</option>
+                </select>
+              </div>
+
+              <div style="min-width: 220px; flex: 1;">
+                <label class="form-label" for="mkt-mandi-filter" style="margin-bottom: 6px; font-weight: 700;" data-i18n="mktFilterMandi">बाजार समितीनुसार फिल्टर</label>
+                <select id="mkt-mandi-filter" class="form-select" onchange="onMarketFilterChange()">
+                  <option value="all" data-i18n="mktAllMandis">सर्व बाजार समित्या (All Mandis)</option>
+                  <option value="Nashik">नाशिक बाजार समिती (Nashik APMC)</option>
+                  <option value="Latur">लातूर बाजार समिती (Latur APMC)</option>
+                  <option value="Akola">अकोला बाजार समिती (Akola APMC)</option>
+                  <option value="Indore">इंदूर बाजार समिती (Indore APMC)</option>
+                  <option value="Ahmednagar">अहमदनगर बाजार समिती (Ahmednagar APMC)</option>
+                  <option value="Jalgaon">जळगाव बाजार समिती (Jalgaon APMC)</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="mkt-provenance-status-tag">
+              <span class="badge badge-provenance-dated">🔵 Agmarknet / MSAMB Verified</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.86rem; color: var(--text-muted); padding: 8px 14px; background: #FBFDF8; border-radius: var(--radius-sm); border-left: 3px solid var(--primary-green);">
+            🏛️ <span data-i18n="mktSourceAttribution">अधिकृत माहिती संदर्भ: ॲगमार्कनेट (कृषी मंत्रालय, भारत सरकार) व पणन मंडळ (MSAMB). सर्व दर ₹ प्रति क्विंटल.</span>
+          </div>
+        </div>
+
+        <!-- Top Selling Recommendation Hero -->
+        <div id="market-advice-hero" class="mandi-hero-alert bullish">
+          <!-- Dynamically populated from js/market.js -->
+        </div>
+
+        <!-- Verifiable 7-Day Historical Modal Price Trend Card -->
+        <div class="farm-card" id="mkt-trend-card" style="margin-bottom: 20px;">
+          <div class="card-header">
+            <h3 class="card-title">📈 <span data-i18n="mktTrend7DaysTitle">७ दिवसांचा प्रत्यक्ष भाव कल (दैनिक सरासरी दर)</span></h3>
+            <span class="badge badge-info" id="mkt-trend-crop-label">लाल कांदा (Red Onion)</span>
+          </div>
+          <div class="mkt-trend-wrapper">
+            <div id="mkt-trend-chart-box" class="mkt-trend-bars-container">
+              <!-- Dynamically populated trend bars -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandi Price Table -->
+        <div class="farm-card">
+          <div class="card-header">
+            <h3 class="card-title">🛒 <span data-i18n="marketTitle">बाजार समिती दर सूची</span></h3>
+            <span class="badge badge-success" id="mkt-table-count-badge">६ बाजार नोंदी</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="farm-table">
+              <thead>
+                <tr>
+                  <th data-i18n="selectMandi">बाजार समिती</th>
+                  <th data-i18n="selectCommodity">शेतमाल</th>
+                  <th data-i18n="mktDateLabel">भाव दिनांक</th>
+                  <th data-i18n="minPrice">किमान भाव</th>
+                  <th data-i18n="currentPrice">सरासरी चालू भाव</th>
+                  <th data-i18n="maxPrice">कमाल भाव</th>
+                  <th data-i18n="mktMspBenchmark">हमीभाव (MSP)</th>
+                  <th data-i18n="weeklyTrend">७ दिवसांचा कल</th>
+                  <th>माहिती दर्जा</th>
+                  <th data-i18n="sellingAdvice">सल्ला</th>
+                </tr>
+              </thead>
+              <tbody id="mandi-price-table-body">
+                <!-- Dynamically populated from js/market.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 8: FARM REPORTS & PROFIT CALCULATOR
+           ================================================================ -->
+      <section id="view-reports" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="reportsTitle">शेती नफा कॅल्क्युलेटर व अहवाल</h2>
+            <p data-i18n="reportsSub">एका एकराचा एकूण खर्च, उत्पादन आणि हाती पडणारा निव्वळ नफा अचूक काढा.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="printFarmReport()">
+            🖨️ <span data-i18n="printReportBtn">अहवाल प्रिंट करा</span>
+          </button>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Calculator Form -->
+          <div class="farm-card">
+            <div class="card-header">
+              <h3 class="card-title">🧮 <span data-i18n="calculatorHeader">लागवड खर्च व उत्पन्न नोंदवा</span></h3>
+            </div>
+            <form id="profit-calculator-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="calc-crop-name" data-i18n="calcCropName">पिकाचे नाव</label>
+                  <input type="text" class="form-control" id="calc-crop-name" value="सोयाबीन (Soybean)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="calc-acres" data-i18n="calcAcres">लागवड क्षेत्र (एकर)</label>
+                  <input type="number" class="form-control" id="calc-acres" value="2" min="0.5" step="0.5">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="calc-seed-cost" data-i18n="calcSeedCost">बियाणे खर्च (₹)</label>
+                  <input type="number" class="form-control" id="calc-seed-cost" value="4800">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="calc-fert-cost" data-i18n="calcFertCost">खते व औषधे खर्च (₹)</label>
+                  <input type="number" class="form-control" id="calc-fert-cost" value="6500">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="calc-labor-cost" data-i18n="calcLaborCost">मजुरी व नांगरट (₹)</label>
+                  <input type="number" class="form-control" id="calc-labor-cost" value="7000">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="calc-other-cost" data-i18n="calcOtherCost">पाणी व इतर खर्च (₹)</label>
+                  <input type="number" class="form-control" id="calc-other-cost" value="2000">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="calc-yield" data-i18n="calcExpectedYield">अपेक्षित एकूण उत्पादन (क्विंटल)</label>
+                  <input type="number" class="form-control" id="calc-yield" value="22" min="1">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="calc-price" data-i18n="calcSellingPrice">विक्री भाव (₹ प्रति क्विंटल)</label>
+                  <input type="number" class="form-control" id="calc-price" value="4600" min="100">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                📊 <span data-i18n="calculateProfitBtn">नफा मोजा</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Calculation Statement Result Card -->
+          <div class="calc-results-card">
+            <div class="card-header" style="border-color: #A5D6A7;">
+              <h3 class="card-title" style="color: var(--primary-dark);">📑 शेती नफा पत्रक (Farm P&L)</h3>
+              <span id="out-calc-crop" class="badge badge-success">सोयाबीन (2 एकर)</span>
+            </div>
+
+            <div class="result-item-big">
+              <span data-i18n="totalInvestment">एकूण खर्च (Total Cost)</span>
+              <strong id="out-total-cost" style="color: var(--danger-red);">₹ 20,300</strong>
+            </div>
+
+            <div class="result-item-big">
+              <span data-i18n="grossReturns">एकूण उत्पन्न (Gross Revenue)</span>
+              <strong id="out-gross-revenue" style="color: var(--primary-green);">₹ 1,01,200</strong>
+            </div>
+
+            <div class="result-item-big total-profit">
+              <span data-i18n="netFarmProfit">हाती आलेला निव्वळ नफा</span>
+              <strong id="out-net-profit">₹ 80,900</strong>
+            </div>
+
+            <div class="result-item-big">
+              <span data-i18n="profitPerAcre">प्रति एकर निव्वळ नफा</span>
+              <strong id="out-profit-per-acre" style="color: var(--primary-dark);">₹ 40,450</strong>
+            </div>
+
+            <div class="result-item-big">
+              <span data-i18n="roiMargin">नफ्याची टक्केवारी %</span>
+              <strong id="out-profit-margin" style="color: var(--primary-green);">79.9 %</strong>
+            </div>
+
+            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 0.86rem; color: var(--text-muted);">
+              ℹ️ <span data-i18n="demoNotice">ही केवळ नमुना शेती माहिती आहे. प्रत्यक्ष पैशांची देवाणघेवाण किंवा इंटरनेट API ची गरज नाही.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           MODULE 9: LANGUAGE SETTINGS
+           ================================================================ -->
+      <section id="view-settings" class="module-view">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 data-i18n="settingsTitle">भाषा सेटिंग्स (Language Settings)</h2>
+            <p data-i18n="settingsSub">तुमच्या आवडीची भाषा निवडा. सर्व बटणे आणि माहिती लगेच बदलेल.</p>
+          </div>
+        </div>
+
+        <div class="farm-card">
+          <p style="font-size: 1.05rem; margin-bottom: 12px; color: var(--primary-dark); font-weight: 600;">
+            👉 एका क्लिकवर हवी ती भाषा निवडा (Click to select language):
+          </p>
+
+          <div class="lang-cards-grid">
+            <!-- Marathi Card -->
+            <div class="lang-card selected" data-lang="mr" onclick="setLanguage('mr')">
+              <div class="lang-card-flag">🇮🇳</div>
+              <div class="lang-card-title" data-i18n="langMrTitle">मराठी (Marathi)</div>
+              <p data-i18n="langMrDesc">महाराष्ट्रातील शेतकरी बांधवांसाठी सोपी आणि सहज भाषा.</p>
+              <div class="lang-card-sample">"रामराम शेतकरी बंधू! आजचा कृषी सल्ला..."</div>
+            </div>
+
+            <!-- Hindi Card -->
+            <div class="lang-card" data-lang="hi" onclick="setLanguage('hi')">
+              <div class="lang-card-flag">🇮🇳</div>
+              <div class="lang-card-title" data-i18n="langHiTitle">हिंदी (Hindi)</div>
+              <p data-i18n="langHiDesc">उत्तर व मध्य भारतातील किसान भाइयों के लिए सरल हिंदी भाषा.</p>
+              <div class="lang-card-sample">"नमस्ते किसान भाई! आज की कृषि सलाह..."</div>
+            </div>
+
+            <!-- English Card -->
+            <div class="lang-card" data-lang="en" onclick="setLanguage('en')">
+              <div class="lang-card-flag">🌐</div>
+              <div class="lang-card-title" data-i18n="langEnTitle">English</div>
+              <p data-i18n="langEnDesc">Default international language for technical terms.</p>
+              <div class="lang-card-sample">"Welcome, Farmer Friend! Today's Farm Advisory..."</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification Floating Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div>
+        <strong>Smart Farmer Assistant | स्मार्ट शेतकरी सहाय्यक</strong> - Made for Indian Farmers
+      </div>
+      <div>
+        🌱 Accessible • 📱 Mobile Responsive • ⚡ Offline Ready (Plain HTML/CSS/JS)
+      </div>
+    </div>
+  </footer>
+
+  <!-- Task Modal for Create / Edit (Phase 4) -->
+  <div id="task-modal-backdrop" class="task-modal-backdrop">
+    <div class="task-modal">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 id="task-modal-header-title" style="margin: 0; color: var(--primary-dark); font-size: 1.2rem;" data-i18n="addTaskBtn">
+          नवीन काम जोडा
+        </h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeTaskModal()" style="padding: 4px 10px;">✕</button>
+      </div>
+
+      <form id="task-modal-form">
+        <input type="hidden" id="task-edit-id">
+
+        <div class="form-group">
+          <label class="form-label" for="task-input-title" data-i18n="taskTitleLabel">कामाचे नाव / स्वरूप</label>
+          <input type="text" class="form-control" id="task-input-title" required minlength="2" maxlength="150" placeholder="उदा. १९:१९:१९ खत फवारणी">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-input-category" data-i18n="taskCategoryLabel">कामाचा प्रकार</label>
+            <select class="form-select" id="task-input-category">
+              <option value="sowing" data-i18n="catTaskSowing">पेरणी व लागवड</option>
+              <option value="irrigation" data-i18n="catTaskIrrigation">सिंचन व पाणी नियोजन</option>
+              <option value="fertilizer" data-i18n="catTaskFertilizer">खत व्यवस्थापन</option>
+              <option value="spraying" data-i18n="catTaskSpraying">कीटकनाशक फवारणी व पीक संरक्षण</option>
+              <option value="harvest" data-i18n="catTaskHarvest">काढणी व मळणी</option>
+              <option value="market" data-i18n="catTaskMarket">बाजार समिती व विक्री</option>
+              <option value="maintenance" data-i18n="catTaskMaintenance">ट्रॅक्टर व अवजारे देखभाल</option>
+              <option value="other" data-i18n="catTaskOther" selected>इतर किरकोळ कामे</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-input-priority" data-i18n="priorityLabel">प्राधान्य</label>
+            <select class="form-select" id="task-input-priority">
+              <option value="high" data-i18n="priorityHigh">तातडीचे / उच्च 🔴</option>
+              <option value="medium" data-i18n="priorityMedium" selected>मध्यम 🟡</option>
+              <option value="low" data-i18n="priorityLow">सामान्य / कमी 🟢</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-input-due-date" data-i18n="dueDateLabel">अंतिम तारीख</label>
+            <input type="date" class="form-control" id="task-input-due-date" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-input-reminder" data-i18n="reminderDateLabel">स्मरणपत्र तारीख (ऐच्छिक)</label>
+            <input type="date" class="form-control" id="task-input-reminder">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="task-input-desc" data-i18n="descriptionLabel">तपशील / शेरा</label>
+          <textarea class="form-control" id="task-input-desc" rows="2" placeholder="उदा. विहिरीचे पाणी २ तास चालू करणे किंवा दुकानदाराकडून औषध आणणे"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px;">
+          <button type="button" class="btn btn-secondary" onclick="closeTaskModal()" data-i18n="cancelBtn">रद्द करा</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-task" data-i18n="saveTaskBtn">काम जतन करा</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cross-Mandi Price Comparison Modal (Phase 5) -->
+  <div id="mkt-compare-modal-backdrop" class="mkt-compare-modal-backdrop" onclick="onMandiCompareBackdropClick(event)">
+    <div class="mkt-compare-modal" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px;">
+        <div>
+          <h3 style="margin: 0; color: var(--primary-dark); font-size: 1.25rem;" data-i18n="mktCompareModalTitle">बाजार समित्यांमधील दरांची तुलना</h3>
+          <p style="margin: 4px 0 0; font-size: 0.88rem; color: var(--text-muted);" data-i18n="mktCompareModalSub">विविध बाजार समित्यांमधील भाव आणि वाहतूक खर्च विचारात घेऊन योग्य बाजारपेठ निवडा.</p>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeMandiCompareModal()" style="padding: 4px 10px;">✕</button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label" for="mkt-compare-crop-select" style="font-weight: 700; margin-bottom: 6px;" data-i18n="selectCommodity">शेतमाल निवडा</label>
+        <select id="mkt-compare-crop-select" class="form-select" onchange="renderMandiComparisonTable()">
+          <option value="onion" selected>लाल कांदा (Red Onion)</option>
+          <option value="soybean">पिवळी सोयाबीन (Yellow Soybean)</option>
+          <option value="cotton">कापूस (Bt Cotton)</option>
+          <option value="wheat">लोकवन गहू (Lokwan Wheat)</option>
+          <option value="chana">हरभरा (Gram / Chana)</option>
+          <option value="maize">मका (Yellow Maize)</option>
+        </select>
+      </div>
+
+      <div class="table-responsive">
+        <table class="farm-table">
+          <thead>
+            <tr>
+              <th data-i18n="selectMandi">बाजार समिती</th>
+              <th>जिल्हा / राज्य</th>
+              <th data-i18n="currentPrice">सरासरी भाव (₹/क्विंटल)</th>
+              <th>किमान - कमाल</th>
+              <th>तुलना / फरक</th>
+              <th>वाहतूक विचार</th>
+            </tr>
+          </thead>
+          <tbody id="mkt-compare-table-body">
+            <!-- Dynamically populated from js/market.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+        <button type="button" class="btn btn-secondary" onclick="closeMandiCompareModal()" data-i18n="closeModalBtn">बंद करा</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Farmer Authentication Modal (Phase 6: Login & Registration) -->
+  <div id="auth-modal-backdrop" class="auth-modal-backdrop" onclick="if(event.target===this) AuthManager.closeModal()">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <div class="auth-modal-header">
+        <div class="auth-modal-title-wrap">
+          <span class="auth-modal-icon">🔐</span>
+          <h3 data-i18n="authModalTitle">शेतकरी खाते प्रवेश</h3>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="AuthManager.closeModal()" style="padding: 4px 10px;" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="auth-tab-row">
+        <button type="button" class="auth-tab-btn active" id="auth-tab-btn-login" onclick="AuthManager.switchTab('login')" data-i18n="authTabLogin">
+          लॉग इन करा
+        </button>
+        <button type="button" class="auth-tab-btn" id="auth-tab-btn-register" onclick="AuthManager.switchTab('register')" data-i18n="authTabRegister">
+          नवीन नोंदणी
+        </button>
+      </div>
+
+      <!-- 1. LOGIN FORM -->
+      <form id="auth-login-form" class="auth-form" onsubmit="AuthManager.handleLogin(event)">
+        <div id="auth-login-error" class="auth-alert-error" style="display: none;"></div>
+
+        <!-- Hackathon Test Account Hint & 1-Click Fill -->
+        <div class="auth-demo-hint-box" style="background: #eef7ee; border: 1px dashed #2e7d32; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-weight: 700; color: #1c4b27;">🌾 Demo Account:</span>
+            <span style="color: #2e7d32; font-family: monospace;">suresh9876 / Farmer@123</span>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="AuthManager.fillDemoCredentials()" style="padding: 3px 8px; font-size: 0.78rem;">
+            ⚡ Fill
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="auth-login-username" data-i18n="authUsernameLabel">युझरनेम किंवा १०-अंकी मोबाईल</label>
+          <input type="text" id="auth-login-username" class="form-control" autocomplete="username" placeholder="उदा. suresh9876 किंवा 9876543210" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label class="form-label" for="auth-login-password" data-i18n="authPasswordLabel">पासवर्ड</label>
+          <div class="password-input-wrap">
+            <input type="password" id="auth-login-password" class="form-control" autocomplete="current-password" placeholder="तुमचा सुरक्षित पासवर्ड टाका" required>
+            <button type="button" class="password-toggle-btn" onclick="AuthManager.togglePassword('auth-login-password', this)" title="Show/Hide">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" id="auth-login-submit-btn" class="btn btn-primary auth-submit-btn" data-i18n="authLoginBtn">
+          खात्यात लॉगिन करा
+        </button>
+
+        <div class="auth-switch-prompt">
+          <a href="javascript:void(0)" onclick="AuthManager.switchTab('register')" data-i18n="authNoAccount">
+            अजून खाते नाही का? येथे नवीन नोंदणी करा
+          </a>
+        </div>
+      </form>
+
+      <!-- 2. REGISTER FORM -->
+      <form id="auth-register-form" class="auth-form" style="display: none;" onsubmit="AuthManager.handleRegister(event)">
+        <div id="auth-register-error" class="auth-alert-error" style="display: none;"></div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="auth-reg-fullname" data-i18n="authFullNameLabel">पूर्ण नाव</label>
+          <input type="text" id="auth-reg-fullname" class="form-control" placeholder="उदा. सुरेश गायकवाड" required>
+        </div>
+
+        <div class="form-row-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label class="form-label" for="auth-reg-username" data-i18n="authRegUsernameLabel">युझरनेम निवडा</label>
+            <input type="text" id="auth-reg-username" class="form-control" placeholder="उदा. suresh_patil" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="auth-reg-phone" data-i18n="authMobileLabel">मोबाईल क्रमांक</label>
+            <input type="tel" id="auth-reg-phone" class="form-control" placeholder="१०-अंकी मोबाईल" pattern="[0-9]{10}">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="auth-reg-password" data-i18n="authRegPasswordLabel">पासवर्ड तयार करा (किमान ६ अक्षरे)</label>
+          <div class="password-input-wrap">
+            <input type="password" id="auth-reg-password" class="form-control" autocomplete="new-password" placeholder="किमान ६ अक्षरे किंवा अंक" minlength="6" required>
+            <button type="button" class="password-toggle-btn" onclick="AuthManager.togglePassword('auth-reg-password', this)" title="Show/Hide">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-row-3col" style="display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 10px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label class="form-label" for="auth-reg-district" data-i18n="authDistrictLabel">जिल्हा</label>
+            <input type="text" id="auth-reg-district" class="form-control" value="Nashik" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="auth-reg-acres" data-i18n="authAcresLabel">शेती (एकर)</label>
+            <input type="number" id="auth-reg-acres" class="form-control" value="3.0" step="0.1" min="0.1" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="auth-reg-crop" data-i18n="authPrimaryCropLabel">मुख्य पीक</label>
+            <input type="text" id="auth-reg-crop" class="form-control" value="Onion" required>
+          </div>
+        </div>
+
+        <button type="submit" id="auth-register-submit-btn" class="btn btn-primary auth-submit-btn" data-i18n="authRegisterBtn">
+          नवीन खाते तयार करा
+        </button>
+
+        <div class="auth-switch-prompt">
+          <a href="javascript:void(0)" onclick="AuthManager.switchTab('login')" data-i18n="authHaveAccount">
+            आधीच खाते आहे का? येथे लॉगिन करा
+          </a>
+        </div>
+      </form>
+
+      <!-- Security Notice -->
+      <div class="auth-security-note" data-i18n="authSecurityNote">
+        🔒 तुमची सर्व शेती नोंदणी Argon2 एनक्रिप्शनने तुमच्या खाजगी खात्यात पूर्णपणे सुरक्षित आहे.
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts in order -->
+  <script src="js/translations.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/recommendations.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/market.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
